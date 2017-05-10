@@ -1,0 +1,39 @@
+{
+  "name": "treehouselabs/snapshot-store",
+  "type": "library",
+  "keywords": ["Snapshot store", "Event sourcing"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jeroen Fiege",
+      "email": "jeroen@treehouse.nl",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=7.0",
+    "treehouselabs/domain": "^1.0|^2.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.0",
+    "doctrine/dbal": "~2.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "TreeHouse\\SnapshotStore\\": "src/TreeHouse/SnapshotStore/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\TreeHouse\\SnapshotStore\\": "tests/TreeHouse/SnapshotStore/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    }
+  }
+}
