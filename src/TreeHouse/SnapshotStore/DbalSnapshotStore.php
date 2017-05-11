@@ -13,11 +13,18 @@ final class DbalSnapshotStore implements SnapshotStoreInterface
     private $connection;
 
     /**
-     * @param Connection $connection
+     * @var string
      */
-    public function __construct(Connection $connection)
+    private $table;
+
+    /**
+     * @param Connection $connection
+     * @param string $table
+     */
+    public function __construct(Connection $connection, $table = 'snapshot_store')
     {
         $this->connection = $connection;
+        $this->table = $table;
     }
 
     /**
@@ -27,7 +34,7 @@ final class DbalSnapshotStore implements SnapshotStoreInterface
     {
         $qb = $this->connection->createQueryBuilder()
             ->select('*')
-            ->from('snapshot_store')
+            ->from($this->table)
             ->where('aggregate_id = :aggregate_id')
             ->orderBy('version', 'DESC')
             ->setMaxResults(1)
@@ -67,7 +74,7 @@ final class DbalSnapshotStore implements SnapshotStoreInterface
         );
 
         $this->connection->insert(
-            'snapshot_store',
+            $this->table,
             [
                 'aggregate_id' => $snapshot->getAggregateId(),
                 'payload' => json_encode($snapshot->getData()),
