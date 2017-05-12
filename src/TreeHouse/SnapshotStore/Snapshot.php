@@ -5,6 +5,9 @@ namespace TreeHouse\SnapshotStore;
 
 final class Snapshot
 {
+    /**
+     * @var string
+     */
     private $aggregateId;
 
     /**
@@ -18,21 +21,35 @@ final class Snapshot
     private $data;
 
     /**
+     * @var string
+     */
+    private $checksum;
+
+    /**
+     * @var string
+     */
+    private $class;
+
+    /**
      * @var \DateTime
      */
     private $datetimeCreated;
 
     /**
-     * @param $aggregateId
+     * @param string $aggregateId
      * @param int $aggregateVersion
      * @param array $data
+     * @param string $class
+     * @param string $checksum
      */
-    public function __construct($aggregateId, $aggregateVersion, array $data)
+    public function __construct($aggregateId, $aggregateVersion, array $data, $checksum, $class)
     {
         $this->aggregateId = $aggregateId;
         $this->aggregateVersion = $aggregateVersion;
         $this->data = $data;
         $this->datetimeCreated = new \DateTime();
+        $this->checksum = $checksum;
+        $this->class = $class;
     }
 
     /**
@@ -50,7 +67,7 @@ final class Snapshot
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getAggregateId()
     {
@@ -71,6 +88,22 @@ final class Snapshot
     public function getData(): array
     {
         return $this->data;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChecksum(): string
+    {
+        return $this->checksum;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClass(): string
+    {
+        return $this->class;
     }
 
     /**

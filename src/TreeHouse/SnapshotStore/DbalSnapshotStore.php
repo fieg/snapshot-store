@@ -53,7 +53,9 @@ final class DbalSnapshotStore implements SnapshotStoreInterface
             $snapshot = new Snapshot(
                 $result['aggregate_id'],
                 (int) $result['version'],
-                json_decode($result['payload'], true)
+                json_decode($result['payload'], true),
+                $result['checksum'],
+                $result['class']
             );
 
             return $snapshot->withDatetimeCreated(new \DateTime($result['datetime_created']));
@@ -67,19 +69,15 @@ final class DbalSnapshotStore implements SnapshotStoreInterface
      */
     public function store(SnapshotableAggregateInterface $aggregate)
     {
-        $snapshot = new Snapshot(
-            $aggregate->getId(),
-            $aggregate->getVersion(),
-            $aggregate->serialize()
-        );
-
         $this->connection->insert(
             $this->table,
             [
-                'aggregate_id' => $snapshot->getAggregateId(),
-                'payload' => json_encode($snapshot->getData()),
-                'version' => $snapshot->getAggregateVersion(),
-                'datetime_created' => ($snapshot->getDatetimeCreated())->format('Y-m-d H:i:s'),
+                'aggregate_id' => $aggregate->getId(),
+                'payload' => json_encode($aggregate->serialize()),
+                'version' => $aggregate->getVersion(),
+                'class' => get_class($aggregate),
+                'checksum' => $aggregate::checksum(),
+                'datetime_created' => (new \DateTime())->format('Y-m-d H:i:s'),
             ]
         );
 
