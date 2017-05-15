@@ -33,7 +33,7 @@ interface SnapshotableAggregateInterface extends AggregateInterface
     public function updateFromStream(EventStreamInterface $stream);
 
     /**
-     * Return md5 checksum of this class
+     * Return checksum hash (like md5) of this class
      *
      * @return string
      */
