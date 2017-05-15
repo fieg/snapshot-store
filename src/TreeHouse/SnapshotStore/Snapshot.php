@@ -42,8 +42,13 @@ final class Snapshot
      * @param string $class
      * @param string $checksum
      */
-    public function __construct($aggregateId, $aggregateVersion, array $data, $checksum, $class)
-    {
+    public function __construct(
+        string $aggregateId,
+        int $aggregateVersion,
+        array $data,
+        string $checksum,
+        string $class
+    ) {
         $this->aggregateId = $aggregateId;
         $this->aggregateVersion = $aggregateVersion;
         $this->data = $data;
