@@ -28,7 +28,7 @@ CREATE TABLE `snapshot_store` (
   `checksum` varchar(255) NOT NULL,
   `class` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UNIQ_D1F10563D0BBCCBEBF1CD3C3` (`aggregate_id`,`version`)
+  UNIQUE KEY `UNIQ_D1F10563D0BBCCBEBF1CD3C3` (`aggregate_id`,`version`,`checksum`)
 )
 ```
 
