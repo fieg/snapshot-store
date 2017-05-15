@@ -20,16 +20,23 @@ final class DbalSnapshotStoreTest extends PHPUnit_Framework_TestCase
         'foo' => 'bar'
     ];
     const DATE = '2017-05-11 09:12:12';
-    const CHECKSUM = '07efad94b32bc5057d214dba7a0b2446'; // md5_file(__DIR__ . '/DummyAggregate.php');
+    const AGGREGATE_CLASS = DummyAggregate::class;
 
     /**
      * @var Connection
      */
     private $connection;
 
+    /**
+     * @var string
+     */
+    private $checksum;
+
     protected function setUp()
     {
         $this->connection = $this->prophesize(Connection::class);
+
+        $this->checksum = md5_file(__DIR__ . '/DummyAggregate.php');
     }
 
     /**
@@ -43,8 +50,8 @@ final class DbalSnapshotStoreTest extends PHPUnit_Framework_TestCase
                 'aggregate_id' => self::ID,
                 'payload' => json_encode(self::DATA),
                 'version' => (string) self::VERSION,
-                'checksum' => (string) self::CHECKSUM,
-                'class' => 'Acme\\Some\\Aggregate',
+                'checksum' => $this->checksum,
+                'class' => self::AGGREGATE_CLASS,
                 'datetime_created' => self::DATE,
             ]
         ];
@@ -86,7 +93,8 @@ final class DbalSnapshotStoreTest extends PHPUnit_Framework_TestCase
                         'aggregate_id' => self::ID,
                         'payload' => json_encode($aggregate->serialize()),
                         'version' => self::VERSION,
-                        'checksum' => self::CHECKSUM,
+                        'class' => self::AGGREGATE_CLASS,
+                        'checksum' => $this->checksum,
                     ],
                     $arg
                 );
