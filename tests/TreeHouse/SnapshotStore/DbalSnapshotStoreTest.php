@@ -11,7 +11,6 @@ use PHPUnit\Framework\Assert;
 use PHPUnit_Framework_TestCase;
 use Prophecy\Argument;
 use TreeHouse\SnapshotStore\DbalSnapshotStore;
-use TreeHouse\SnapshotStore\SnapshotableAggregateInterface;
 
 final class DbalSnapshotStoreTest extends PHPUnit_Framework_TestCase
 {
@@ -21,6 +20,7 @@ final class DbalSnapshotStoreTest extends PHPUnit_Framework_TestCase
         'foo' => 'bar'
     ];
     const DATE = '2017-05-11 09:12:12';
+    const CHECKSUM = '07efad94b32bc5057d214dba7a0b2446'; // md5_file(__DIR__ . '/DummyAggregate.php');
 
     /**
      * @var Connection
@@ -43,6 +43,8 @@ final class DbalSnapshotStoreTest extends PHPUnit_Framework_TestCase
                 'aggregate_id' => self::ID,
                 'payload' => json_encode(self::DATA),
                 'version' => (string) self::VERSION,
+                'checksum' => (string) self::CHECKSUM,
+                'class' => 'Acme\\Some\\Aggregate',
                 'datetime_created' => self::DATE,
             ]
         ];
@@ -74,19 +76,17 @@ final class DbalSnapshotStoreTest extends PHPUnit_Framework_TestCase
             $this->connection->reveal()
         );
 
-        $aggregate = $this->prophesize(SnapshotableAggregateInterface::class);
-        $aggregate->getId()->willReturn(self::ID);
-        $aggregate->getVersion()->willReturn(self::VERSION);
-        $aggregate->serialize()->willReturn(self::DATA);
+        $aggregate = DummyAggregate::createFromData(['id' => self::ID, 'version' => self::VERSION]);
 
         $this->connection->insert(
             'snapshot_store',
-            Argument::that(function($arg) {
+            Argument::that(function($arg) use ($aggregate) {
                 Assert::assertArraySubset(
                     [
                         'aggregate_id' => self::ID,
-                        'payload' => json_encode(self::DATA),
+                        'payload' => json_encode($aggregate->serialize()),
                         'version' => self::VERSION,
+                        'checksum' => self::CHECKSUM,
                     ],
                     $arg
                 );
@@ -96,7 +96,7 @@ final class DbalSnapshotStoreTest extends PHPUnit_Framework_TestCase
         )->shouldBeCalled();
 
         $store->store(
-            $aggregate->reveal()
+            $aggregate
         );
     }
 }
