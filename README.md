@@ -21,10 +21,12 @@ Basic SQL schema for snapshot store. Adapt to your needs.
 ```sql
 CREATE TABLE `snapshot_store` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `aggregate_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8_unicode_ci NOT NULL,
+  `aggregate_id` varchar(255) NOT NULL,
+  `payload` longtext NOT NULL,
   `version` int(11) NOT NULL,
   `datetime_created` datetime NOT NULL,
+  `checksum` varchar(255) NOT NULL,
+  `class` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_D1F10563D0BBCCBEBF1CD3C3` (`aggregate_id`,`version`)
 )
